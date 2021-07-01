@@ -29,7 +29,7 @@ object HotzoneAnalysis {
     val joinDf = spark.sql("select rectangle._c0 as rectangle, point._c5 as point from rectangle,point where ST_Contains(rectangle._c0,point._c5)")
     joinDf.createOrReplaceTempView("joinResult")
 
-    return spark.sql("select rectangle,count(*) from joinResult group by rectangle order by rectangle")
+    return spark.sql("select rectangle,count(*) from joinResult group by rectangle order by rectangle").coalesce(1)
   }
 
 }
