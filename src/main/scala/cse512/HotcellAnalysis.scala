@@ -30,7 +30,7 @@ def runHotcellAnalysis(spark: SparkSession, pointPath: String): DataFrame =
     )))
   pickupInfo = spark.sql("select CalculateX(nyctaxitrips._c5),CalculateY(nyctaxitrips._c5), CalculateZ(nyctaxitrips._c1) from nyctaxitrips")
   var newCoordinateName = Seq("x", "y", "z")
-  pickupInfo = pickupInfo.toDF(newCoordinateName:_*)
+  pickupInfo = pickupInfo.toDF(newCoordinateName:_*).groupBy("x", "y", "z").count().withColumn("square count", col("count")*col("count"))
   pickupInfo.show()
 
   // Define the min and max of x, y, z
@@ -42,8 +42,11 @@ def runHotcellAnalysis(spark: SparkSession, pointPath: String): DataFrame =
   val maxZ = 31
   val numCells = (maxX - minX + 1)*(maxY - minY + 1)*(maxZ - minZ + 1)
 
-  // YOU NEED TO CHANGE THIS PART
+  import scala.math.sqrt
+  
+  val x_bar = pickupInfo.agg(sum("count")).first.getLong(0).toDouble / numCells
+  val ssd = sqrt(pickupInfo.agg(sum("square count")).first.getLong(0).toDouble / numCells - x_bar*x_bar)
 
-  return pickupInfo // YOU NEED TO CHANGE THIS PART
+  return pickupInfo.select("x", "y", "z")
 }
 }
