@@ -48,4 +48,36 @@ object HotcellUtils {
   }
 
   // YOU NEED TO CHANGE THIS PART
+  def CalculateW (x: Int, y: Int, z: Int, minX: Double, maxX: Double, minY: Double, maxY: Double, minZ: Double, maxZ: Double): Double =
+  {
+    var result = 0
+    var cnt = 0
+
+    if (x == minX || x == maxX) {
+      cnt += 1
+    }
+    if (y == minY || y == maxY) {
+      cnt += 1
+    }
+    if (z == minZ || z == maxZ) {
+      cnt += 1
+    }
+
+    cnt match {
+      case 1 => result = 18
+      case 2 => result = 12
+      case 3 => result = 8
+      case _ => result = 27
+    }
+    return result
+  }
+
+  def CalculateG (weight: Double, freq: Int, numCells: Double, avg: Double, std: Double): Double =
+  {
+    return (freq.toDouble - (avg * weight)) / (std * math.sqrt((( weight * numCells.toDouble) - (weight * weight)) / (numCells.toDouble - 1.0)))
+  }
+
+  def is_neighbor(x1:Int,y1:Int,z1:Int,x2:Int,y2:Int,z2:Int): Boolean={
+    return scala.math.abs(x1-x2) <=1 && scala.math.abs(y1-y2) <=1 && scala.math.abs(z1-z2) <=1
+  }
 }
